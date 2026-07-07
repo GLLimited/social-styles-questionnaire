@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Social Styles Questionnaire — Mobile Friendly</title>
+<style>
+  :root {
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    font-size: 16px;
+  }
+  body {
+    max-width: 980px;
+    margin: 28px auto;
+    padding: 20px;
+    color: #1f2937;
+    line-height: 1.45;
+    background: #f9fafb;
+  }
+  h1 {
+    font-size: 1.5rem;
+    margin-bottom: .5rem;
+    text-align: center;
+  }
+  p.lead {
+    color: #374151;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  .card {
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 12px;
+    background: #fff;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+  }
+  .question {
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .qnum {font-weight:600;color:#111827;}
+  .opts {
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+  }
+  label.option {
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:8px 10px;
+    border-radius:8px;
+    border:1px solid transparent;
+    cursor:pointer;
+  }
+  label.option:hover {background:#f8fafc;border-color:#e6eef8;}
+  .controls {
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    align-items:center;
+    margin-top:14px;
+  }
+  button {
+    cursor:pointer;
+    padding:10px 14px;
+    border-radius:8px;
+    border:0;
+    background:#111827;
+    color:#fff;
+    flex:1;
+  }
+  button.secondary {background:#6b7280;}
+  .totals {
+    margin-top:18px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
+    justify-content:center;
+  }
+  .pill {
+    padding:8px 12px;
+    border-radius:999px;
+    background:#f3f4f6;
+    border:1px solid #e5e7eb;
+    min-width:110px;
+    text-align:center;
+  }
+  .pill .label {display:block;font-size:.75rem;color:#6b7280;}
+  .pill .value {display:block;font-weight:700;font-size:1.1rem;color:#111827;}
+  .primary {
+    padding:8px 12px;
+    border-radius:8px;
+    background:linear-gradient(90deg,#6366f1,#06b6d4);
+    color:#fff;
+    font-weight:700;
+    text-align:center;
+    flex:1 1 100%;
+  }
+  footer {
+    margin-top:28px;
+    color:#6b7280;
+    font-size:13px;
+    text-align:center;
+  }
+  @media (max-width:720px){
+    .grid {grid-template-columns:1fr;}
+    body {padding:12px;}
+    button, .primary {width:100%;}
+  }
+</style>
+</head>
+<body>
+  <h1>Social Styles Questionnaire</h1>
+  <p class="lead">Choose the one word in each set that describes you best. Totals update automatically.</p>
+
+  <form id="quiz">
+    <div class="grid" id="questionsGrid"></div>
+
+    <div class="controls">
+      <button type="button" id="resetBtn" class="secondary">Reset</button>
+      <button type="button" id="printBtn">Print / Save as PDF</button>
+    </div>
+
+    <div class="totals" aria-live="polite">
+      <div class="pill"><span class="label">Analytical</span><span id="Analytical" class="value">0</span></div>
+      <div class="pill"><span class="label">Amiable</span><span id="Amiable" class="value">0</span></div>
+      <div class="pill"><span class="label">Expressive</span><span id="Expressive" class="value">0</span></div>
+      <div class="pill"><span class="label">Driver</span><span id="Driver" class="value">0</span></div>
+      <div class="primary" id="primaryStyle">Primary: —</div>
+    </div>
+  </form>
+
+<script>
+const answerMapping = {
+  1: {a: "Driver", b: "Amiable", c: "Analytical", d: "Expressive"},
+  2: {a: "Analytical", b: "Driver", c: "Expressive", d: "Amiable"},
+  3: {a: "Amiable", b: "Driver", c: "Analytical", d: "Expressive"},
+  4: {a: "Expressive", b: "Amiable", c: "Driver", d: "Analytical"},
+  5: {a: "Amiable", b: "Driver", c: "Expressive", d: "Analytical"},
+  6: {a: "Amiable", b: "Driver", c: "Expressive", d: "Analytical"},
+  7: {a: "Amiable", b: "Driver", c: "Analytical", d: "Expressive"},
+  8: {a: "Driver", b: "Expressive", c: "Analytical", d: "Amiable"},
+  9: {a: "Analytical", b: "Driver", c: "Amiable", d: "Expressive"},
+ 10: {a: "Driver", b: "Amiable", c: "Analytical", d: "Expressive"},
+ 11: {a: "Analytical", b: "Expressive", c: "Driver", d: "Amiable"},
+ 12: {a: "Amiable", b: "Driver", c: "Expressive", d: "Analytical"},
+ 13: {a: "Analytical", b: "Driver", c: "Amiable", d: "Expressive"},
+ 14: {a: "Driver", b: "Amiable", c: "Expressive", d: "Analytical"},
+ 15: {a: "Driver", b: "Expressive", c: "Analytical", d: "Amiable"},
+ 16: {a: "Driver", b: "Amiable", c: "Expressive", d: "Analytical"},
+ 17: {a: "Expressive", b: "Driver", c: "Analytical", d: "Amiable"},
+ 18: {a: "Analytical", b: "Expressive", c: "Driver", d: "Amiable"},
+ 19: {a: "Expressive", b: "Analytical", c: "Driver", d: "Amiable"},
+ 20: {a: "Driver", b: "Expressive", c: "Amiable", d: "Analytical"}
+};
+
+const questionText = {
+1: ["a. Persuasive","b. Fearful","c. Open-minded","d. Original"],
+2: ["a. Cautious","b. Convincing","c. Aggressive","d. Good-natured"],
+3: ["a. Docile","b. Dogged","c. Open-minded","d. Bold"],
+4: ["a. Charming","b. Loyal","c. Determined","d. Even-tempered"],
+5: ["a. Willing","b. Eager","c. Nervy","d. Strong-willed"],
+6: ["a. Agreeable","b. High-spirited","c. Confident","d. Even-tempered"],
+7: ["a. Obliging","b. Assertive","c. Precise","d. Animated"],
+8: ["a. Disciplined","b. Cheerful","c. Restless","d. Resigned"],
+9: ["a. Sympathetic","b. Persistent","c. Obedient","d. Spontaneous"],
+10:["a. Competitive","b. Tolerant","c. Fussy","d. Pioneering"],
+11:["a. Respectful","b. Jovial","c. Influential","d. Optimistic"],
+12:["a. Generous","b. Unconquerable","c. Inspiring","d. Submissive"],
+13:["a. Considerate","b. Brave","c. Timid","d. Adaptable"],
+14:["a. Argumentative","b. Kind","c. Nonchalant","d. Patient"],
+15:["a. Self-reliant","b. Lighthearted","c. Soft spoken","d. Trusting"],
+16:["a. Adventurous","b. Peaceful","c. Positive","d. Moderate"],
+17:["a. Cordial","b. Vigorous","c. Receptive","d. Controlled"],
+18:["a. Accurate","b. Good mixer","c. Decisive","d. Lenient"],
+19:["a. Talkative","b. Conventional","c. Outspoken","d. Satisfied"],
+20:["a. Audacious","b. Popular","c. Companionable","d. Polished"]
+};
+
+const grid=document.getElementById('questionsGrid');
+for(let i=1;i<=20;i++){
+  const card=document.createElement('div');
+  card.className='card';
+  const qCount=document.createElement('div');
+  qCount.style.fontWeight='700';
+  qCount.style.marginBottom='6px';
+  qCount.textContent=`Question ${i}`;
+  card.appendChild(qCount);
+
+  const q=document.createElement('div');
+  q.className='question';
+  const qnum=document.createElement('div');
+  qnum.className='qnum';
+  qnum.textContent=i;
+  q.appendChild(qnum);
+
+  const opts=document.createElement('div');
+  opts.className='opts';
+  const labels=questionText[i];
+  for(const opt of ['a','b','c','d']){
+    const label=document.createElement('label');
+    label.className='option';
+    const radio=document.createElement('input');
+    radio.type='radio';
+    radio.name='Q'+i;
+    radio.value=opt;
+    radio.dataset.style=answerMapping[i][opt];
+    radio.addEventListener('change',updateTotals);
+    const span=document.createElement('span');
+    span.textContent=labels[['a','b','c','d'].indexOf(opt)];
+    label.appendChild(radio);
+    label.appendChild(span);
+    opts.appendChild(label);
+  }
+  q.appendChild(opts);
+  card.appendChild(q);
+  grid.appendChild(card);
+}
+
+function updateTotals(){
+  const totals={Analytical:0,Amiable:0,Expressive:0,Driver:0};
+  for(let i=1;i<=20;i++){
+    const sel=document.querySelector('input[name="Q'+i+'"]:checked');
+    if(sel) totals[sel.dataset.style]++;
+  }
+  for(const k of Object.keys(totals)){
+    document.getElementById(k).textContent=totals[k];
+  }
+  const ordered=Object.entries(totals).sort((a,b)=>b[1]-a[1]);
+  let primary='—';
+  if(ordered[0][1]>0){
+    const max=ordered[0][1];
+    const ties=ordered.filter(x=>x[1]===max).map(x=>x[0]);
+    primary=ties.join(' & ')+' ('+max+')';
+  }
+  document.getElementById('primaryStyle').textContent='Primary: '+primary;
+}
+
+document.getElementById('resetBtn').addEventListener('click',()=>{
+  document.getElementById('quiz').reset();
+  updateTotals();
+});
+document.getElementById('printBtn').addEventListener('click',()=>window.print());
+updateTotals();
+</script>
+</body>
+</html>
